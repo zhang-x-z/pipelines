@@ -2,11 +2,10 @@ from kfp import dsl, components, kubernetes, compiler
 
 # Load Fluid components
 # TODO: need to change the location of these component yaml files.
-create_s3_dataset = components.load_component_from_file('./component-yaml/create-s3-dataset.yaml')
-create_alluxioruntime = components.load_component_from_file('./component-yaml/create-alluxioruntime.yaml')
-preheat_dataset = components.load_component_from_file('./component-yaml/preheat-dataset.yaml')
+create_s3_dataset_with_alluxioruntime = components.load_component_from_file('./component-yaml/create-s3-dataset.yaml')
+preload_dataset = components.load_component_from_file('./component-yaml/preheat-dataset.yaml')
 delete_dataset = components.load_component_from_file('./component-yaml/cleanup-dataset-and-alluxioruntime.yaml')
-delete_alluxioruntime = components.load_component_from_file('./component-yaml/cleanup-dataset-and-alluxioruntime.yaml')
+delete_runtime = components.load_component_from_file('./component-yaml/cleanup-dataset-and-alluxioruntime.yaml')
 
 # The component to train a simple CNN with FashionMNIST
 # In production environment, you'd better not to use packages_to_install,
@@ -197,28 +196,44 @@ def train_and_test_cnn(dataset_name: str, data_root_path: str, batch_size: int, 
     logging.info(f"Final Test Accuracy: {test_acc:.2f}%")
 
 @dsl.pipeline(name='train-and-test-cnn-for-fashion-mnist')
-def train_and_test_cnn_for_fashion_mnist_pipeline(dataset_name: str, namespace: str, s3_endpoint: str, s3_region: str, mount_point: str, batch_size: int, epochs: int, learning_rate: float):
+def train_and_test_cnn_for_fashion_mnist_pipeline(
+    dataset_name: str,
+    namespace: str,
+    s3_secret_name: str,
+    s3_endpoint: str,
+    s3_region: str,
+    mount_point: str,
+    batch_size: int,
+    epochs: int,
+    learning_rate: float
+):
     # dataset's mount path when training
     mount_path = '/datasets'
     # prepare dataset
-    create_dataset_op = create_s3_dataset(dataset_name=dataset_name, namespace=namespace, mount_point=mount_point, mount_s3_endpoint=s3_endpoint, mount_s3_region=s3_region)
-    create_alluxioruntime_op = create_alluxioruntime(dataset_name=dataset_name, namespace=namespace)
-    preheat_dataset_op = preheat_dataset(dataset_name=dataset_name, namespace=namespace)
+    create_dataset_and_runtime_op = create_s3_dataset_with_alluxioruntime(
+        dataset_name=dataset_name,
+        namespace=namespace,
+        mount_point=mount_point,
+        s3_endpoint=s3_endpoint,
+        s3_region=s3_region,
+        cred_secret_name=s3_secret_name,
+        cache_replicas=2,
+        cache_capacity="30"
+    )
+    preload_dataset_op = preload_dataset(dataset_name=dataset_name, namespace=namespace)
     # disable caching
-    create_dataset_op.set_caching_options(False)
-    create_alluxioruntime_op.set_caching_options(False)
-    preheat_dataset_op.set_caching_options(False)
+    create_dataset_and_runtime_op.set_caching_options(False)
+    preload_dataset_op.set_caching_options(False)
     # train cnn
     train_and_test_cnn_op = train_and_test_cnn(dataset_name=dataset_name, data_root_path=mount_path, batch_size=batch_size, epochs=epochs, learning_rate=learning_rate)
     train_and_test_cnn_op.set_caching_options(False)
     # mount dataset pvc to training component
     kubernetes.mount_pvc(task=train_and_test_cnn_op, pvc_name=dataset_name, mount_path=mount_path)
     # define components' dependence
-    create_alluxioruntime_op.after(create_dataset_op)
-    preheat_dataset_op.after(create_alluxioruntime_op)
-    train_and_test_cnn_op.after(preheat_dataset_op)
+    preload_dataset_op.after(create_dataset_and_runtime_op)
+    train_and_test_cnn_op.after(preload_dataset_op)
     # delete dataset and alluxio runtime
-    delete_alluxioruntime_op = delete_alluxioruntime(dataset_name=dataset_name, namespace=namespace)
+    delete_alluxioruntime_op = delete_runtime(runtime_type="alluxio", dataset_name=dataset_name, namespace=namespace)
     delete_alluxioruntime_op.set_caching_options(False)
     delete_alluxioruntime_op.after(train_and_test_cnn_op)
     delete_alluxioruntime_op.ignore_upstream_failure()

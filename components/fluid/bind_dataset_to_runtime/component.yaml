@@ -1,0 +1,116 @@
+# PIPELINE DEFINITION
+# Name: bind-dataset-to-runtime
+# Inputs:
+#    cache_capacity: float
+#    cache_medium: str
+#    cache_replicas: int
+#    dataset_name: str
+#    namespace: str
+#    runtime_type: str
+components:
+  comp-bind-dataset-to-runtime:
+    executorLabel: exec-bind-dataset-to-runtime
+    inputDefinitions:
+      parameters:
+        cache_capacity:
+          parameterType: NUMBER_DOUBLE
+        cache_medium:
+          parameterType: STRING
+        cache_replicas:
+          parameterType: NUMBER_INTEGER
+        dataset_name:
+          parameterType: STRING
+        namespace:
+          parameterType: STRING
+        runtime_type:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-bind-dataset-to-runtime:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - bind_dataset_to_runtime
+        command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.7.0'\
+          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
+          \  python3 -m pip install --quiet --no-warn-script-location 'git+https://github.com/fluid-cloudnative/fluid-client-python.git'\
+          \ && \"$0\" \"$@\"\n"
+        - sh
+        - -ec
+        - 'program_path=$(mktemp -d)
+
+
+          printf "%s" "$0" > "$program_path/ephemeral_component.py"
+
+          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
+
+          '
+        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
+          \ *\n\ndef bind_dataset_to_runtime(\n    dataset_name: str,\n    namespace:\
+          \ str,\n    runtime_type: str,\n    cache_replicas: int,\n    cache_capacity:\
+          \ float,\n    cache_medium: str\n):\n    import logging\n    from fluid\
+          \ import constants\n\n    # TODO: validate cache_medium\n    legal_runtime_type\
+          \ = {\n        \"alluxio\": constants.ALLUXIO_RUNTIME_KIND,\n        \"\
+          jindo\": constants.JINDO_RUNTIME_KIND,\n        \"juicefs\": constants.JUICEFS_RUNTIME_KIND,\n\
+          \        \"efc\": constants.EFC_RUNTIME_KIND,\n        \"vineyard\": constants.VINEYARD_RUNTIME_KIND\n\
+          \    }\n    if runtime_type not in legal_runtime_type.keys():\n        logging.info(f\"\
+          Failed to bind Dataset \\\"{namespace}/{dataset_name}\\\" because argument\
+          \ runtime_type must be one of [\\\"alluxio\\\", \\\"jindo\\\", \\\"juicefs\\\
+          \", \\\"efc\\\", \\\"vineyard\\\"]\")\n        return\n\n    import fluid\n\
+          \n    fluid_client = fluid.FluidClient(fluid.ClientConfig())\n\n    dataset\
+          \ = fluid_client.get_dataset(dataset_name=dataset_name, namespace=namespace)\n\
+          \    dataset.bind_runtime(\n        runtime_type=legal_runtime_type[runtime_type],\n\
+          \        replicas=cache_replicas,\n        cache_capacity_GiB=cache_capacity,\n\
+          \        cache_medium=cache_medium,\n        wait=True\n    )\n\n    logging.info(f\"\
+          Bind Dataset \\\"{namespace}/{dataset_name}\\\" to runtime \\\"{namespace}/{dataset_name}\\\
+          \" successfully\")\n\n"
+        image: python:3.7
+pipelineInfo:
+  name: bind-dataset-to-runtime
+root:
+  dag:
+    tasks:
+      bind-dataset-to-runtime:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-bind-dataset-to-runtime
+        inputs:
+          parameters:
+            cache_capacity:
+              componentInputParameter: cache_capacity
+            cache_medium:
+              componentInputParameter: cache_medium
+            cache_replicas:
+              componentInputParameter: cache_replicas
+            dataset_name:
+              componentInputParameter: dataset_name
+            namespace:
+              componentInputParameter: namespace
+            runtime_type:
+              componentInputParameter: runtime_type
+        taskInfo:
+          name: bind-dataset-to-runtime
+  inputDefinitions:
+    parameters:
+      cache_capacity:
+        parameterType: NUMBER_DOUBLE
+      cache_medium:
+        parameterType: STRING
+      cache_replicas:
+        parameterType: NUMBER_INTEGER
+      dataset_name:
+        parameterType: STRING
+      namespace:
+        parameterType: STRING
+      runtime_type:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.7.0
