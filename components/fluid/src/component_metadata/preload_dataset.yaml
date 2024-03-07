@@ -11,15 +11,19 @@ components:
     inputDefinitions:
       parameters:
         dataset_name:
+          description: Name of the Dataset.
           parameterType: STRING
         load_metadata:
           defaultValue: false
+          description: Whether to load metadata. Defaults to False.
           isOptional: true
           parameterType: BOOLEAN
         namespace:
+          description: Namespace of the Dataset.
           parameterType: STRING
         target_path:
           defaultValue: /
+          description: Path which needs to preload data. Defaults to "/".
           isOptional: true
           parameterType: STRING
 deploymentSpec:
@@ -61,15 +65,19 @@ root:
   inputDefinitions:
     parameters:
       dataset_name:
+        description: Name of the Dataset.
         parameterType: STRING
       load_metadata:
         defaultValue: false
+        description: Whether to load metadata. Defaults to False.
         isOptional: true
         parameterType: BOOLEAN
       namespace:
+        description: Namespace of the Dataset.
         parameterType: STRING
       target_path:
         defaultValue: /
+        description: Path which needs to preload data. Defaults to "/".
         isOptional: true
         parameterType: STRING
 schemaVersion: 2.1.0

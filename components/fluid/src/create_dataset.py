@@ -4,6 +4,7 @@ import common
 # Preload the Dataset with given name and namespace
 @dsl.component(
     base_image=common.base_image,
+    packages_to_install=[common.fluid_pysdk],
     target_image=common.target_image
 )
 def create_dataset(
@@ -17,6 +18,19 @@ def create_dataset(
     mount_name: str = None,
     mode: str = "ReadOnly",
 ):
+    """Component to create a Dataset.
+
+    Args:
+        dataset_name (str): Name of the Dataset.
+        namespace (str): Namespace of the Dataset.
+        mount_point (str): Mount point of the source.
+        options (dict): Options which may be used in cache runtime.
+        cred_secret_name (str, optional): Name of the secret which is used to access external storage (e.g. S3). Defaults to None.
+        cred_secret_options (dict, optional): Contents in secret `<cred_secret_name>`. Defaults to None.
+        mount_path (str, optional): Path to mount in cache runtime. When this field is None, the mount path will be `/<mount_name>`. Defaults to None.
+        mount_name (str, optional): Name of this mount. When this field is None, it will be set to `<dataset_name>`. Defaults to None.
+        mode (str, optional): Mode of this Dataset. Must be one of ["ReadOnly", "ReadWrite"]. Defaults to "ReadOnly".
+    """
     import logging
     from fluid import FluidClient, ClientConfig
     

@@ -4,6 +4,7 @@ import common
 # Preload the Dataset with given name and namespace
 @dsl.component(
     base_image=common.base_image,
+    packages_to_install=[common.fluid_pysdk],
     target_image=common.target_image
 )
 def preload_dataset(
@@ -12,6 +13,14 @@ def preload_dataset(
     target_path: str = "/",
     load_metadata: bool = False
 ):
+    """Component to preload the Dataset.
+
+    Args:
+        dataset_name (str): Name of the Dataset.
+        namespace (str): Namespace of the Dataset.
+        target_path (str, optional): Path which needs to preload data. Defaults to "/".
+        load_metadata (bool, optional): Whether to load metadata. Defaults to False.
+    """
     import logging
     from fluid import FluidClient, ClientConfig
     

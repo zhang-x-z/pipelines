@@ -2,7 +2,7 @@
 # Name: migrate-dataset
 # Inputs:
 #    dataset_name: str
-#    external_storage: str
+#    external_storage_uri: str
 #    migrate_direction: str
 #    migrate_path: str
 #    namespace: str
@@ -12,14 +12,19 @@ components:
     inputDefinitions:
       parameters:
         dataset_name:
+          description: Name of the Dataset.
           parameterType: STRING
-        external_storage:
+        external_storage_uri:
+          description: External storage uri and credentials used for migration.
           parameterType: STRING
         migrate_direction:
+          description: Destination path of this migration.
           parameterType: STRING
         migrate_path:
+          description: Path to be migrated.
           parameterType: STRING
         namespace:
+          description: Namespace of the Dataset.
           parameterType: STRING
 deploymentSpec:
   executors:
@@ -49,8 +54,8 @@ root:
           parameters:
             dataset_name:
               componentInputParameter: dataset_name
-            external_storage:
-              componentInputParameter: external_storage
+            external_storage_uri:
+              componentInputParameter: external_storage_uri
             migrate_direction:
               componentInputParameter: migrate_direction
             migrate_path:
@@ -62,14 +67,19 @@ root:
   inputDefinitions:
     parameters:
       dataset_name:
+        description: Name of the Dataset.
         parameterType: STRING
-      external_storage:
+      external_storage_uri:
+        description: External storage uri and credentials used for migration.
         parameterType: STRING
       migrate_direction:
+        description: Destination path of this migration.
         parameterType: STRING
       migrate_path:
+        description: Path to be migrated.
         parameterType: STRING
       namespace:
+        description: Namespace of the Dataset.
         parameterType: STRING
 schemaVersion: 2.1.0
 sdkVersion: kfp-2.7.0

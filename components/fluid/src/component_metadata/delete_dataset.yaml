@@ -9,8 +9,10 @@ components:
     inputDefinitions:
       parameters:
         dataset_name:
+          description: Name of the Dataset.
           parameterType: STRING
         namespace:
+          description: Namespace of the Dataset.
           parameterType: STRING
 deploymentSpec:
   executors:
@@ -47,8 +49,10 @@ root:
   inputDefinitions:
     parameters:
       dataset_name:
+        description: Name of the Dataset.
         parameterType: STRING
       namespace:
+        description: Namespace of the Dataset.
         parameterType: STRING
 schemaVersion: 2.1.0
 sdkVersion: kfp-2.7.0

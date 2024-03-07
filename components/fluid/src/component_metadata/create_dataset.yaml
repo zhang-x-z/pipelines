@@ -16,28 +16,41 @@ components:
     inputDefinitions:
       parameters:
         cred_secret_name:
+          description: Name of the secret which is used to access external storage
+            (e.g. S3). Defaults to None.
           isOptional: true
           parameterType: STRING
         cred_secret_options:
+          description: Contents in secret `<cred_secret_name>`. Defaults to None.
           isOptional: true
           parameterType: STRUCT
         dataset_name:
+          description: Name of the Dataset.
           parameterType: STRING
         mode:
           defaultValue: ReadOnly
+          description: Mode of this Dataset. Must be one of ["ReadOnly", "ReadWrite"].
+            Defaults to "ReadOnly".
           isOptional: true
           parameterType: STRING
         mount_name:
+          description: Name of this mount. When this field is None, it will be set
+            to `<dataset_name>`. Defaults to None.
           isOptional: true
           parameterType: STRING
         mount_path:
+          description: Path to mount in cache runtime. When this field is None, the
+            mount path will be `/<mount_name>`. Defaults to None.
           isOptional: true
           parameterType: STRING
         mount_point:
+          description: Mount point of the source.
           parameterType: STRING
         namespace:
+          description: Namespace of the Dataset.
           parameterType: STRING
         options:
+          description: Options which may be used in cache runtime.
           parameterType: STRUCT
 deploymentSpec:
   executors:
@@ -88,28 +101,41 @@ root:
   inputDefinitions:
     parameters:
       cred_secret_name:
+        description: Name of the secret which is used to access external storage (e.g.
+          S3). Defaults to None.
         isOptional: true
         parameterType: STRING
       cred_secret_options:
+        description: Contents in secret `<cred_secret_name>`. Defaults to None.
         isOptional: true
         parameterType: STRUCT
       dataset_name:
+        description: Name of the Dataset.
         parameterType: STRING
       mode:
         defaultValue: ReadOnly
+        description: Mode of this Dataset. Must be one of ["ReadOnly", "ReadWrite"].
+          Defaults to "ReadOnly".
         isOptional: true
         parameterType: STRING
       mount_name:
+        description: Name of this mount. When this field is None, it will be set to
+          `<dataset_name>`. Defaults to None.
         isOptional: true
         parameterType: STRING
       mount_path:
+        description: Path to mount in cache runtime. When this field is None, the
+          mount path will be `/<mount_name>`. Defaults to None.
         isOptional: true
         parameterType: STRING
       mount_point:
+        description: Mount point of the source.
         parameterType: STRING
       namespace:
+        description: Namespace of the Dataset.
         parameterType: STRING
       options:
+        description: Options which may be used in cache runtime.
         parameterType: STRUCT
 schemaVersion: 2.1.0
 sdkVersion: kfp-2.7.0

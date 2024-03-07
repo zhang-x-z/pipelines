@@ -6,6 +6,7 @@ import common
 # Delete the runtime with given name, type (default type is alluxio) and namespace
 @dsl.component(
     base_image=common.base_image,
+    packages_to_install=[common.fluid_pysdk],
     target_image=common.target_image
 )
 def delete_runtime(
@@ -13,6 +14,13 @@ def delete_runtime(
     namespace: str,
     runtime_type: str = "alluxio"
 ):
+    """Component to delete a cache runtime.
+
+    Args:
+        runtime_name (str): Name of the cache runtime.
+        namespace (str): Namespace of the cache runtime.
+        runtime_type (str, optional): Type of the cache runtime. Must be one of ["alluxio", "jindo", "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
+    """
     import logging
     
     runtime_type = utils.convert_runtime_type(runtime_type)

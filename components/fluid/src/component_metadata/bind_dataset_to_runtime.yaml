@@ -3,9 +3,9 @@
 # Inputs:
 #    cache_capacity: float
 #    cache_medium: str [Default: 'MEM']
-#    cache_replicas: int [Default: 1.0]
 #    dataset_name: str
 #    namespace: str
+#    replicas: int [Default: 1.0]
 #    runtime_type: str [Default: 'alluxio']
 components:
   comp-bind-dataset-to-runtime:
@@ -13,21 +13,29 @@ components:
     inputDefinitions:
       parameters:
         cache_capacity:
+          description: Cache capacity (GiB) of one cache runtime worker.
           parameterType: NUMBER_DOUBLE
         cache_medium:
           defaultValue: MEM
+          description: Cache medium type used in cache runtime worker. Must be one
+            of ["MEM", "SSD", "HDD"]. Defaults to "MEM".
           isOptional: true
           parameterType: STRING
-        cache_replicas:
-          defaultValue: 1.0
-          isOptional: true
-          parameterType: NUMBER_INTEGER
         dataset_name:
+          description: Name of the Dataset which need to bind to a cache runtime.
           parameterType: STRING
         namespace:
+          description: Namespace of the Dataset which need to bind to a cache runtime.
           parameterType: STRING
+        replicas:
+          defaultValue: 1.0
+          description: Number of cache runtime workers. Defaults to 1.
+          isOptional: true
+          parameterType: NUMBER_INTEGER
         runtime_type:
           defaultValue: alluxio
+          description: Type of the cache runtime. Must be one of ["alluxio", "jindo",
+            "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
           isOptional: true
           parameterType: STRING
 deploymentSpec:
@@ -40,6 +48,12 @@ deploymentSpec:
         - --function_to_execute
         - bind_dataset_to_runtime
         command:
+        - sh
+        - -c
+        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
+          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
+          \ python3 -m pip install --quiet --no-warn-script-location 'fluid-pysdk==1.0.0a1'\
+          \ && \"$0\" \"$@\"\n"
         - python3
         - -m
         - kfp.dsl.executor_main
@@ -60,12 +74,12 @@ root:
               componentInputParameter: cache_capacity
             cache_medium:
               componentInputParameter: cache_medium
-            cache_replicas:
-              componentInputParameter: cache_replicas
             dataset_name:
               componentInputParameter: dataset_name
             namespace:
               componentInputParameter: namespace
+            replicas:
+              componentInputParameter: replicas
             runtime_type:
               componentInputParameter: runtime_type
         taskInfo:
@@ -73,21 +87,29 @@ root:
   inputDefinitions:
     parameters:
       cache_capacity:
+        description: Cache capacity (GiB) of one cache runtime worker.
         parameterType: NUMBER_DOUBLE
       cache_medium:
         defaultValue: MEM
+        description: Cache medium type used in cache runtime worker. Must be one of
+          ["MEM", "SSD", "HDD"]. Defaults to "MEM".
         isOptional: true
         parameterType: STRING
-      cache_replicas:
-        defaultValue: 1.0
-        isOptional: true
-        parameterType: NUMBER_INTEGER
       dataset_name:
+        description: Name of the Dataset which need to bind to a cache runtime.
         parameterType: STRING
       namespace:
+        description: Namespace of the Dataset which need to bind to a cache runtime.
         parameterType: STRING
+      replicas:
+        defaultValue: 1.0
+        description: Number of cache runtime workers. Defaults to 1.
+        isOptional: true
+        parameterType: NUMBER_INTEGER
       runtime_type:
         defaultValue: alluxio
+        description: Type of the cache runtime. Must be one of ["alluxio", "jindo",
+          "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
         isOptional: true
         parameterType: STRING
 schemaVersion: 2.1.0

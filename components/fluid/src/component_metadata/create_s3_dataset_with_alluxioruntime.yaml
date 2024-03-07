@@ -2,12 +2,12 @@
 # Name: create-s3-dataset-with-alluxioruntime
 # Inputs:
 #    cache_capacity: float
-#    cache_replicas: int [Default: 1.0]
 #    cred_secret_name: str [Default: 's3-secret']
 #    dataset_mode: str [Default: 'ReadOnly']
 #    dataset_name: str
 #    mount_point: str
 #    namespace: str
+#    replicas: int [Default: 1.0]
 #    s3_endpoint: str
 #    s3_region: str
 components:
@@ -16,28 +16,39 @@ components:
     inputDefinitions:
       parameters:
         cache_capacity:
+          description: Cache capacity (GiB) of one cache runtime worker.
           parameterType: NUMBER_DOUBLE
-        cache_replicas:
-          defaultValue: 1.0
-          isOptional: true
-          parameterType: NUMBER_INTEGER
         cred_secret_name:
           defaultValue: s3-secret
+          description: Name of the secret which is used to access S3. Defaults to
+            "s3-secret".
           isOptional: true
           parameterType: STRING
         dataset_mode:
           defaultValue: ReadOnly
+          description: Mode of this Dataset. Must be one of ["ReadOnly", "ReadWrite"].
+            Defaults to "ReadOnly".
           isOptional: true
           parameterType: STRING
         dataset_name:
+          description: Name of the Dataset.
           parameterType: STRING
         mount_point:
+          description: Mount point of the source.
           parameterType: STRING
         namespace:
+          description: Namespace of the Dataset.
           parameterType: STRING
+        replicas:
+          defaultValue: 1.0
+          description: Number of cache runtime workers. Defaults to 1.
+          isOptional: true
+          parameterType: NUMBER_INTEGER
         s3_endpoint:
+          description: Endpoint of the S3 bucket you want to mount.
           parameterType: STRING
         s3_region:
+          description: Region of the S3 bucket you want to mount.
           parameterType: STRING
 deploymentSpec:
   executors:
@@ -67,8 +78,6 @@ root:
           parameters:
             cache_capacity:
               componentInputParameter: cache_capacity
-            cache_replicas:
-              componentInputParameter: cache_replicas
             cred_secret_name:
               componentInputParameter: cred_secret_name
             dataset_mode:
@@ -79,6 +88,8 @@ root:
               componentInputParameter: mount_point
             namespace:
               componentInputParameter: namespace
+            replicas:
+              componentInputParameter: replicas
             s3_endpoint:
               componentInputParameter: s3_endpoint
             s3_region:
@@ -88,28 +99,38 @@ root:
   inputDefinitions:
     parameters:
       cache_capacity:
+        description: Cache capacity (GiB) of one cache runtime worker.
         parameterType: NUMBER_DOUBLE
-      cache_replicas:
-        defaultValue: 1.0
-        isOptional: true
-        parameterType: NUMBER_INTEGER
       cred_secret_name:
         defaultValue: s3-secret
+        description: Name of the secret which is used to access S3. Defaults to "s3-secret".
         isOptional: true
         parameterType: STRING
       dataset_mode:
         defaultValue: ReadOnly
+        description: Mode of this Dataset. Must be one of ["ReadOnly", "ReadWrite"].
+          Defaults to "ReadOnly".
         isOptional: true
         parameterType: STRING
       dataset_name:
+        description: Name of the Dataset.
         parameterType: STRING
       mount_point:
+        description: Mount point of the source.
         parameterType: STRING
       namespace:
+        description: Namespace of the Dataset.
         parameterType: STRING
+      replicas:
+        defaultValue: 1.0
+        description: Number of cache runtime workers. Defaults to 1.
+        isOptional: true
+        parameterType: NUMBER_INTEGER
       s3_endpoint:
+        description: Endpoint of the S3 bucket you want to mount.
         parameterType: STRING
       s3_region:
+        description: Region of the S3 bucket you want to mount.
         parameterType: STRING
 schemaVersion: 2.1.0
 sdkVersion: kfp-2.7.0

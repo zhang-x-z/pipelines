@@ -10,11 +10,15 @@ components:
     inputDefinitions:
       parameters:
         namespace:
+          description: Namespace of the cache runtime.
           parameterType: STRING
         runtime_name:
+          description: Name of the cache runtime.
           parameterType: STRING
         runtime_type:
           defaultValue: alluxio
+          description: Type of the cache runtime. Must be one of ["alluxio", "jindo",
+            "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
           isOptional: true
           parameterType: STRING
 deploymentSpec:
@@ -54,11 +58,15 @@ root:
   inputDefinitions:
     parameters:
       namespace:
+        description: Namespace of the cache runtime.
         parameterType: STRING
       runtime_name:
+        description: Name of the cache runtime.
         parameterType: STRING
       runtime_type:
         defaultValue: alluxio
+        description: Type of the cache runtime. Must be one of ["alluxio", "jindo",
+          "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
         isOptional: true
         parameterType: STRING
 schemaVersion: 2.1.0
