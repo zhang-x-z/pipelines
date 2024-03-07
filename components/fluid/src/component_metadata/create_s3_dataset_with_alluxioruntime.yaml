@@ -1,0 +1,115 @@
+# PIPELINE DEFINITION
+# Name: create-s3-dataset-with-alluxioruntime
+# Inputs:
+#    cache_capacity: float
+#    cache_replicas: int [Default: 1.0]
+#    cred_secret_name: str [Default: 's3-secret']
+#    dataset_mode: str [Default: 'ReadOnly']
+#    dataset_name: str
+#    mount_point: str
+#    namespace: str
+#    s3_endpoint: str
+#    s3_region: str
+components:
+  comp-create-s3-dataset-with-alluxioruntime:
+    executorLabel: exec-create-s3-dataset-with-alluxioruntime
+    inputDefinitions:
+      parameters:
+        cache_capacity:
+          parameterType: NUMBER_DOUBLE
+        cache_replicas:
+          defaultValue: 1.0
+          isOptional: true
+          parameterType: NUMBER_INTEGER
+        cred_secret_name:
+          defaultValue: s3-secret
+          isOptional: true
+          parameterType: STRING
+        dataset_mode:
+          defaultValue: ReadOnly
+          isOptional: true
+          parameterType: STRING
+        dataset_name:
+          parameterType: STRING
+        mount_point:
+          parameterType: STRING
+        namespace:
+          parameterType: STRING
+        s3_endpoint:
+          parameterType: STRING
+        s3_region:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-create-s3-dataset-with-alluxioruntime:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - create_s3_dataset_with_alluxioruntime
+        command:
+        - python3
+        - -m
+        - kfp.dsl.executor_main
+        image: fluidcloudnative/fluid-pipline-components:v0.0.1
+pipelineInfo:
+  name: create-s3-dataset-with-alluxioruntime
+root:
+  dag:
+    tasks:
+      create-s3-dataset-with-alluxioruntime:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-create-s3-dataset-with-alluxioruntime
+        inputs:
+          parameters:
+            cache_capacity:
+              componentInputParameter: cache_capacity
+            cache_replicas:
+              componentInputParameter: cache_replicas
+            cred_secret_name:
+              componentInputParameter: cred_secret_name
+            dataset_mode:
+              componentInputParameter: dataset_mode
+            dataset_name:
+              componentInputParameter: dataset_name
+            mount_point:
+              componentInputParameter: mount_point
+            namespace:
+              componentInputParameter: namespace
+            s3_endpoint:
+              componentInputParameter: s3_endpoint
+            s3_region:
+              componentInputParameter: s3_region
+        taskInfo:
+          name: create-s3-dataset-with-alluxioruntime
+  inputDefinitions:
+    parameters:
+      cache_capacity:
+        parameterType: NUMBER_DOUBLE
+      cache_replicas:
+        defaultValue: 1.0
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      cred_secret_name:
+        defaultValue: s3-secret
+        isOptional: true
+        parameterType: STRING
+      dataset_mode:
+        defaultValue: ReadOnly
+        isOptional: true
+        parameterType: STRING
+      dataset_name:
+        parameterType: STRING
+      mount_point:
+        parameterType: STRING
+      namespace:
+        parameterType: STRING
+      s3_endpoint:
+        parameterType: STRING
+      s3_region:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.7.0

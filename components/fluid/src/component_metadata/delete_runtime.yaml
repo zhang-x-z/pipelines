@@ -1,0 +1,65 @@
+# PIPELINE DEFINITION
+# Name: delete-runtime
+# Inputs:
+#    namespace: str
+#    runtime_name: str
+#    runtime_type: str [Default: 'alluxio']
+components:
+  comp-delete-runtime:
+    executorLabel: exec-delete-runtime
+    inputDefinitions:
+      parameters:
+        namespace:
+          parameterType: STRING
+        runtime_name:
+          parameterType: STRING
+        runtime_type:
+          defaultValue: alluxio
+          isOptional: true
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-delete-runtime:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - delete_runtime
+        command:
+        - python3
+        - -m
+        - kfp.dsl.executor_main
+        image: fluidcloudnative/fluid-pipline-components:v0.0.1
+pipelineInfo:
+  name: delete-runtime
+root:
+  dag:
+    tasks:
+      delete-runtime:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-delete-runtime
+        inputs:
+          parameters:
+            namespace:
+              componentInputParameter: namespace
+            runtime_name:
+              componentInputParameter: runtime_name
+            runtime_type:
+              componentInputParameter: runtime_type
+        taskInfo:
+          name: delete-runtime
+  inputDefinitions:
+    parameters:
+      namespace:
+        parameterType: STRING
+      runtime_name:
+        parameterType: STRING
+      runtime_type:
+        defaultValue: alluxio
+        isOptional: true
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.7.0

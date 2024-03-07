@@ -1,0 +1,75 @@
+# PIPELINE DEFINITION
+# Name: migrate-dataset
+# Inputs:
+#    dataset_name: str
+#    external_storage: str
+#    migrate_direction: str
+#    migrate_path: str
+#    namespace: str
+components:
+  comp-migrate-dataset:
+    executorLabel: exec-migrate-dataset
+    inputDefinitions:
+      parameters:
+        dataset_name:
+          parameterType: STRING
+        external_storage:
+          parameterType: STRING
+        migrate_direction:
+          parameterType: STRING
+        migrate_path:
+          parameterType: STRING
+        namespace:
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-migrate-dataset:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - migrate_dataset
+        command:
+        - python3
+        - -m
+        - kfp.dsl.executor_main
+        image: fluidcloudnative/fluid-pipline-components:v0.0.1
+pipelineInfo:
+  name: migrate-dataset
+root:
+  dag:
+    tasks:
+      migrate-dataset:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-migrate-dataset
+        inputs:
+          parameters:
+            dataset_name:
+              componentInputParameter: dataset_name
+            external_storage:
+              componentInputParameter: external_storage
+            migrate_direction:
+              componentInputParameter: migrate_direction
+            migrate_path:
+              componentInputParameter: migrate_path
+            namespace:
+              componentInputParameter: namespace
+        taskInfo:
+          name: migrate-dataset
+  inputDefinitions:
+    parameters:
+      dataset_name:
+        parameterType: STRING
+      external_storage:
+        parameterType: STRING
+      migrate_direction:
+        parameterType: STRING
+      migrate_path:
+        parameterType: STRING
+      namespace:
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.7.0

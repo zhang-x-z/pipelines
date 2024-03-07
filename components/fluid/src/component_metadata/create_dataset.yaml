@@ -1,0 +1,115 @@
+# PIPELINE DEFINITION
+# Name: create-dataset
+# Inputs:
+#    cred_secret_name: str
+#    cred_secret_options: dict
+#    dataset_name: str
+#    mode: str [Default: 'ReadOnly']
+#    mount_name: str
+#    mount_path: str
+#    mount_point: str
+#    namespace: str
+#    options: dict
+components:
+  comp-create-dataset:
+    executorLabel: exec-create-dataset
+    inputDefinitions:
+      parameters:
+        cred_secret_name:
+          isOptional: true
+          parameterType: STRING
+        cred_secret_options:
+          isOptional: true
+          parameterType: STRUCT
+        dataset_name:
+          parameterType: STRING
+        mode:
+          defaultValue: ReadOnly
+          isOptional: true
+          parameterType: STRING
+        mount_name:
+          isOptional: true
+          parameterType: STRING
+        mount_path:
+          isOptional: true
+          parameterType: STRING
+        mount_point:
+          parameterType: STRING
+        namespace:
+          parameterType: STRING
+        options:
+          parameterType: STRUCT
+deploymentSpec:
+  executors:
+    exec-create-dataset:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - create_dataset
+        command:
+        - python3
+        - -m
+        - kfp.dsl.executor_main
+        image: fluidcloudnative/fluid-pipline-components:v0.0.1
+pipelineInfo:
+  name: create-dataset
+root:
+  dag:
+    tasks:
+      create-dataset:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-create-dataset
+        inputs:
+          parameters:
+            cred_secret_name:
+              componentInputParameter: cred_secret_name
+            cred_secret_options:
+              componentInputParameter: cred_secret_options
+            dataset_name:
+              componentInputParameter: dataset_name
+            mode:
+              componentInputParameter: mode
+            mount_name:
+              componentInputParameter: mount_name
+            mount_path:
+              componentInputParameter: mount_path
+            mount_point:
+              componentInputParameter: mount_point
+            namespace:
+              componentInputParameter: namespace
+            options:
+              componentInputParameter: options
+        taskInfo:
+          name: create-dataset
+  inputDefinitions:
+    parameters:
+      cred_secret_name:
+        isOptional: true
+        parameterType: STRING
+      cred_secret_options:
+        isOptional: true
+        parameterType: STRUCT
+      dataset_name:
+        parameterType: STRING
+      mode:
+        defaultValue: ReadOnly
+        isOptional: true
+        parameterType: STRING
+      mount_name:
+        isOptional: true
+        parameterType: STRING
+      mount_path:
+        isOptional: true
+        parameterType: STRING
+      mount_point:
+        parameterType: STRING
+      namespace:
+        parameterType: STRING
+      options:
+        parameterType: STRUCT
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.7.0

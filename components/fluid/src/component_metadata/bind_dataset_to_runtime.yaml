@@ -1,0 +1,94 @@
+# PIPELINE DEFINITION
+# Name: bind-dataset-to-runtime
+# Inputs:
+#    cache_capacity: float
+#    cache_medium: str [Default: 'MEM']
+#    cache_replicas: int [Default: 1.0]
+#    dataset_name: str
+#    namespace: str
+#    runtime_type: str [Default: 'alluxio']
+components:
+  comp-bind-dataset-to-runtime:
+    executorLabel: exec-bind-dataset-to-runtime
+    inputDefinitions:
+      parameters:
+        cache_capacity:
+          parameterType: NUMBER_DOUBLE
+        cache_medium:
+          defaultValue: MEM
+          isOptional: true
+          parameterType: STRING
+        cache_replicas:
+          defaultValue: 1.0
+          isOptional: true
+          parameterType: NUMBER_INTEGER
+        dataset_name:
+          parameterType: STRING
+        namespace:
+          parameterType: STRING
+        runtime_type:
+          defaultValue: alluxio
+          isOptional: true
+          parameterType: STRING
+deploymentSpec:
+  executors:
+    exec-bind-dataset-to-runtime:
+      container:
+        args:
+        - --executor_input
+        - '{{$}}'
+        - --function_to_execute
+        - bind_dataset_to_runtime
+        command:
+        - python3
+        - -m
+        - kfp.dsl.executor_main
+        image: fluidcloudnative/fluid-pipline-components:v0.0.1
+pipelineInfo:
+  name: bind-dataset-to-runtime
+root:
+  dag:
+    tasks:
+      bind-dataset-to-runtime:
+        cachingOptions:
+          enableCache: true
+        componentRef:
+          name: comp-bind-dataset-to-runtime
+        inputs:
+          parameters:
+            cache_capacity:
+              componentInputParameter: cache_capacity
+            cache_medium:
+              componentInputParameter: cache_medium
+            cache_replicas:
+              componentInputParameter: cache_replicas
+            dataset_name:
+              componentInputParameter: dataset_name
+            namespace:
+              componentInputParameter: namespace
+            runtime_type:
+              componentInputParameter: runtime_type
+        taskInfo:
+          name: bind-dataset-to-runtime
+  inputDefinitions:
+    parameters:
+      cache_capacity:
+        parameterType: NUMBER_DOUBLE
+      cache_medium:
+        defaultValue: MEM
+        isOptional: true
+        parameterType: STRING
+      cache_replicas:
+        defaultValue: 1.0
+        isOptional: true
+        parameterType: NUMBER_INTEGER
+      dataset_name:
+        parameterType: STRING
+      namespace:
+        parameterType: STRING
+      runtime_type:
+        defaultValue: alluxio
+        isOptional: true
+        parameterType: STRING
+schemaVersion: 2.1.0
+sdkVersion: kfp-2.7.0

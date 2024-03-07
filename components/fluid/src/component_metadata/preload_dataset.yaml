@@ -32,32 +32,10 @@ deploymentSpec:
         - --function_to_execute
         - preload_dataset
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'kfp==2.7.0'\
-          \ '--no-deps' 'typing-extensions>=3.7.4,<5; python_version<\"3.9\"'  &&\
-          \  python3 -m pip install --quiet --no-warn-script-location 'git+https://github.com/fluid-cloudnative/fluid-client-python.git'\
-          \ && \"$0\" \"$@\"\n"
-        - sh
-        - -ec
-        - 'program_path=$(mktemp -d)
-
-
-          printf "%s" "$0" > "$program_path/ephemeral_component.py"
-
-          _KFP_RUNTIME=true python3 -m kfp.dsl.executor_main                         --component_module_path                         "$program_path/ephemeral_component.py"                         "$@"
-
-          '
-        - "\nimport kfp\nfrom kfp import dsl\nfrom kfp.dsl import *\nfrom typing import\
-          \ *\n\ndef preload_dataset(\n    dataset_name: str,\n    namespace: str,\n\
-          \    target_path: str = \"/\",\n    load_metadata: bool = False\n):\n  \
-          \  import logging\n    import fluid\n\n    fluid_client = fluid.FluidClient(fluid.ClientConfig())\n\
-          \    fluid_client.get_dataset(dataset_name=dataset_name, namespace=namespace).preload(target_path=target_path,\
-          \ load_metadata=load_metadata).run()\n\n    logging.info(f\"Load Dataset\
-          \ \\\"{namespace}/{dataset_name}\\\"  successfully\")\n\n"
-        image: python:3.7
+        - python3
+        - -m
+        - kfp.dsl.executor_main
+        image: fluidcloudnative/fluid-pipline-components:v0.0.1
 pipelineInfo:
   name: preload-dataset
 root:
