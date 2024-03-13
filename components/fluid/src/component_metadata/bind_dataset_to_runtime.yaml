@@ -17,8 +17,8 @@ components:
           parameterType: NUMBER_DOUBLE
         cache_medium:
           defaultValue: MEM
-          description: Cache medium type used in cache runtime worker. Must be one
-            of ["MEM", "SSD", "HDD"]. Defaults to "MEM".
+          description: "Cache medium type used in cache runtime workers. \nMust be\
+            \ one of [\"MEM\", \"SSD\", \"HDD\"]. Defaults to \"MEM\"."
           isOptional: true
           parameterType: STRING
         dataset_name:
@@ -34,8 +34,9 @@ components:
           parameterType: NUMBER_INTEGER
         runtime_type:
           defaultValue: alluxio
-          description: Type of the cache runtime. Must be one of ["alluxio", "jindo",
-            "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
+          description: "Type of the cache runtime. \nMust be one of [\"alluxio\",\
+            \ \"jindo\", \"juicefs\", \"efc\", \"vineyard\"]. Defaults to \"alluxio\"\
+            ."
           isOptional: true
           parameterType: STRING
 deploymentSpec:
@@ -48,12 +49,6 @@ deploymentSpec:
         - --function_to_execute
         - bind_dataset_to_runtime
         command:
-        - sh
-        - -c
-        - "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip ||\
-          \ python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1\
-          \ python3 -m pip install --quiet --no-warn-script-location 'fluid-pysdk==1.0.0a1'\
-          \ && \"$0\" \"$@\"\n"
         - python3
         - -m
         - kfp.dsl.executor_main
@@ -91,8 +86,8 @@ root:
         parameterType: NUMBER_DOUBLE
       cache_medium:
         defaultValue: MEM
-        description: Cache medium type used in cache runtime worker. Must be one of
-          ["MEM", "SSD", "HDD"]. Defaults to "MEM".
+        description: "Cache medium type used in cache runtime workers. \nMust be one\
+          \ of [\"MEM\", \"SSD\", \"HDD\"]. Defaults to \"MEM\"."
         isOptional: true
         parameterType: STRING
       dataset_name:
@@ -108,8 +103,8 @@ root:
         parameterType: NUMBER_INTEGER
       runtime_type:
         defaultValue: alluxio
-        description: Type of the cache runtime. Must be one of ["alluxio", "jindo",
-          "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
+        description: "Type of the cache runtime. \nMust be one of [\"alluxio\", \"\
+          jindo\", \"juicefs\", \"efc\", \"vineyard\"]. Defaults to \"alluxio\"."
         isOptional: true
         parameterType: STRING
 schemaVersion: 2.1.0

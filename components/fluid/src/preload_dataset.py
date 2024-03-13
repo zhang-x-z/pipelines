@@ -4,7 +4,6 @@ import common
 # Preload the Dataset with given name and namespace
 @dsl.component(
     base_image=common.base_image,
-    packages_to_install=[common.fluid_pysdk],
     target_image=common.target_image
 )
 def preload_dataset(
@@ -18,7 +17,9 @@ def preload_dataset(
     Args:
         dataset_name (str): Name of the Dataset.
         namespace (str): Namespace of the Dataset.
-        target_path (str, optional): Path which needs to preload data. Defaults to "/".
+        target_path (str, optional): Path which needs to preload data, both directory and file path are supported. Defaults to "/".
+            Note that the path is relative to the Dataset's mount path. 
+            For example, when mounting `s3://bucket/path` to the Dataset's root path (`/`), you preloads `s3://bucket/path/dir` by set this field to `/dir`.
         load_metadata (bool, optional): Whether to load metadata. Defaults to False.
     """
     import logging

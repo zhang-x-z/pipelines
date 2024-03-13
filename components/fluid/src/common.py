@@ -1,9 +1,4 @@
-base_image = "python:3.8"
-
-
-fluid_pysdk_name = "fluid-pysdk"
-fluid_pysdk_version = "1.0.0a1"
-fluid_pysdk = f"{fluid_pysdk_name}=={fluid_pysdk_version}"
+base_image = "fluidcloudnative/fluid-client-python:v1.0.0-c83a36d"
 
 image_repo = "fluidcloudnative"
 image_name = "fluid-pipline-components"

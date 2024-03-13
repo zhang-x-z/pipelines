@@ -5,7 +5,6 @@ import common
 # Bind a cache runtime to the given Dataset, default is AlluxioRuntime
 @dsl.component(
     base_image=common.base_image,
-    packages_to_install=[common.fluid_pysdk],
     target_image=common.target_image
 )
 def bind_dataset_to_runtime(
@@ -22,8 +21,10 @@ def bind_dataset_to_runtime(
         dataset_name (str): Name of the Dataset which need to bind to a cache runtime.
         namespace (str): Namespace of the Dataset which need to bind to a cache runtime.
         cache_capacity (float): Cache capacity (GiB) of one cache runtime worker.
-        runtime_type (str, optional): Type of the cache runtime. Must be one of ["alluxio", "jindo", "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
-        cache_medium (str, optional): Cache medium type used in cache runtime worker. Must be one of ["MEM", "SSD", "HDD"]. Defaults to "MEM".
+        runtime_type (str, optional): Type of the cache runtime. 
+            Must be one of ["alluxio", "jindo", "juicefs", "efc", "vineyard"]. Defaults to "alluxio".
+        cache_medium (str, optional): Cache medium type used in cache runtime workers. 
+            Must be one of ["MEM", "SSD", "HDD"]. Defaults to "MEM".
         replicas (int, optional): Number of cache runtime workers. Defaults to 1.
     """
     import logging

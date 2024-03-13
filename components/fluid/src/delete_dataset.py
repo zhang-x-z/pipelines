@@ -1,10 +1,9 @@
-from kfp import dsl
+from kfp import dsl, compiler
 import common
 
 # Delete the Dataset with given name and namespace
 @dsl.component(
     base_image=common.base_image,
-    packages_to_install=[common.fluid_pysdk],
     target_image=common.target_image
 )
 def delete_dataset(dataset_name: str, namespace: str):
@@ -21,3 +20,6 @@ def delete_dataset(dataset_name: str, namespace: str):
     fluid_client.cleanup_dataset(name=dataset_name, namespace=namespace, wait=True)
 
     logging.info(f"Cleanup Dataset \"{namespace}/{dataset_name}\" successfully!")
+
+if __name__ == "__main__":
+    compiler.Compiler().compile(delete_dataset, package_path="./test.yaml")

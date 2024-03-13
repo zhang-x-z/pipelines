@@ -23,7 +23,11 @@ components:
           parameterType: STRING
         target_path:
           defaultValue: /
-          description: Path which needs to preload data. Defaults to "/".
+          description: "Path which needs to preload data, both directory and file\
+            \ path are supported. Defaults to \"/\".\nNote that the path is relative\
+            \ to the Dataset's mount path. \nFor example, when mounting `s3://bucket/path`\
+            \ to the Dataset's root path (`/`), you preloads `s3://bucket/path/dir`\
+            \ by set this field to `/dir`."
           isOptional: true
           parameterType: STRING
 deploymentSpec:
@@ -77,7 +81,11 @@ root:
         parameterType: STRING
       target_path:
         defaultValue: /
-        description: Path which needs to preload data. Defaults to "/".
+        description: "Path which needs to preload data, both directory and file path\
+          \ are supported. Defaults to \"/\".\nNote that the path is relative to the\
+          \ Dataset's mount path. \nFor example, when mounting `s3://bucket/path`\
+          \ to the Dataset's root path (`/`), you preloads `s3://bucket/path/dir`\
+          \ by set this field to `/dir`."
         isOptional: true
         parameterType: STRING
 schemaVersion: 2.1.0

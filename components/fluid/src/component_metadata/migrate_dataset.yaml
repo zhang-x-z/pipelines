@@ -2,6 +2,7 @@
 # Name: migrate-dataset
 # Inputs:
 #    dataset_name: str
+#    external_storage_encrypt_options: dict
 #    external_storage_uri: str
 #    migrate_direction: str
 #    migrate_path: str
@@ -14,11 +15,19 @@ components:
         dataset_name:
           description: Name of the Dataset.
           parameterType: STRING
+        external_storage_encrypt_options:
+          description: Encrypt options used to access the external storage. Defaults
+            to None.
+          isOptional: true
+          parameterType: STRUCT
         external_storage_uri:
-          description: External storage uri and credentials used for migration.
+          description: External storage uri used for migration.
           parameterType: STRING
         migrate_direction:
-          description: Destination path of this migration.
+          description: 'The direction of migration. Must be either "from" or "to".
+
+            "from" means migrate from external storage to the Dataset. "to" means
+            migrate from the Dataset to external storage.'
           parameterType: STRING
         migrate_path:
           description: Path to be migrated.
@@ -54,6 +63,8 @@ root:
           parameters:
             dataset_name:
               componentInputParameter: dataset_name
+            external_storage_encrypt_options:
+              componentInputParameter: external_storage_encrypt_options
             external_storage_uri:
               componentInputParameter: external_storage_uri
             migrate_direction:
@@ -69,11 +80,19 @@ root:
       dataset_name:
         description: Name of the Dataset.
         parameterType: STRING
+      external_storage_encrypt_options:
+        description: Encrypt options used to access the external storage. Defaults
+          to None.
+        isOptional: true
+        parameterType: STRUCT
       external_storage_uri:
-        description: External storage uri and credentials used for migration.
+        description: External storage uri used for migration.
         parameterType: STRING
       migrate_direction:
-        description: Destination path of this migration.
+        description: 'The direction of migration. Must be either "from" or "to".
+
+          "from" means migrate from external storage to the Dataset. "to" means migrate
+          from the Dataset to external storage.'
         parameterType: STRING
       migrate_path:
         description: Path to be migrated.

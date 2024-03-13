@@ -4,7 +4,6 @@ import common
 # Migrate the Dataset with given name and namespace
 @dsl.component(
     base_image=common.base_image,
-    packages_to_install=[common.fluid_pysdk],
     target_image=common.target_image
 )
 def migrate_dataset(
@@ -24,7 +23,7 @@ def migrate_dataset(
         migrate_direction (str): The direction of migration. Must be either "from" or "to".
             "from" means migrate from external storage to the Dataset. "to" means migrate from the Dataset to external storage.
         external_storage_uri (str): External storage uri used for migration.
-        external_storage_encrypt_options (dict): Encrypt options used to access external storage. Defaults to None.
+        external_storage_encrypt_options (dict): Encrypt options used to access the external storage. Defaults to None.
     """
     import logging
     from fluid import FluidClient, ClientConfig

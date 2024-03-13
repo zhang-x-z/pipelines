@@ -21,7 +21,15 @@ components:
           isOptional: true
           parameterType: STRING
         cred_secret_options:
-          description: Contents in secret `<cred_secret_name>`. Defaults to None.
+          description: "Contents in secret `<cred_secret_name>`. Defaults to None.\n\
+            E.g. If you create a secret to access S3 with AlluxioRuntime like:\n```yaml\n\
+            apiVersion: v1\nkind: Secret\nmetadata:\n  name: s3-secret\nstringData:\n\
+            \  s3-accessKeyId: <your-access-key-id>\n  s3-secretKey: <your-secret-key>\n\
+            ```\nYou should set `cred_secret_name` and `cred_secret_options` to:\n\
+            ```python\ncred_secret_name = \"s3-secret\"\ncred_secret_options = {\n\
+            \    \"s3a.accessKeyId\": \"s3-accessKeyId\",\n    \"s3a.secretKey\":\
+            \ \"s3-secretKey\"\n}\n```\nNote that you should set `cred_secret_name`\
+            \ and `cred_secret_options` together."
           isOptional: true
           parameterType: STRUCT
         dataset_name:
@@ -35,22 +43,29 @@ components:
           parameterType: STRING
         mount_name:
           description: Name of this mount. When this field is None, it will be set
-            to `<dataset_name>`. Defaults to None.
+            to `dataset_name`. Defaults to None.
           isOptional: true
           parameterType: STRING
         mount_path:
           description: Path to mount in cache runtime. When this field is None, the
-            mount path will be `/<mount_name>`. Defaults to None.
+            mount path will be set to `/<mount_name>`. Defaults to None.
           isOptional: true
           parameterType: STRING
         mount_point:
-          description: Mount point of the source.
+          description: 'Mount point of the source.
+
+            E.g. use `s3://your-bucket` to mount a S3 bucket.'
           parameterType: STRING
         namespace:
           description: Namespace of the Dataset.
           parameterType: STRING
         options:
-          description: Options which may be used in cache runtime.
+          description: "Options which can be used in cache runtime. Defaults to None.\n\
+            E.g. you can set Alluxio configurations in this field if you will bind\
+            \ this Dataset to AlluxioRuntime:\n```python\noptions = {\n    \"alluxio.underfs.s3.endpoint\"\
+            : \"https://your-s3-endpoint\",\n    \"alluxio.underfs.s3.endpoint.region\"\
+            : \"your-s3-region\"\n}\n``` "
+          isOptional: true
           parameterType: STRUCT
 deploymentSpec:
   executors:
@@ -106,7 +121,14 @@ root:
         isOptional: true
         parameterType: STRING
       cred_secret_options:
-        description: Contents in secret `<cred_secret_name>`. Defaults to None.
+        description: "Contents in secret `<cred_secret_name>`. Defaults to None.\n\
+          E.g. If you create a secret to access S3 with AlluxioRuntime like:\n```yaml\n\
+          apiVersion: v1\nkind: Secret\nmetadata:\n  name: s3-secret\nstringData:\n\
+          \  s3-accessKeyId: <your-access-key-id>\n  s3-secretKey: <your-secret-key>\n\
+          ```\nYou should set `cred_secret_name` and `cred_secret_options` to:\n```python\n\
+          cred_secret_name = \"s3-secret\"\ncred_secret_options = {\n    \"s3a.accessKeyId\"\
+          : \"s3-accessKeyId\",\n    \"s3a.secretKey\": \"s3-secretKey\"\n}\n```\n\
+          Note that you should set `cred_secret_name` and `cred_secret_options` together."
         isOptional: true
         parameterType: STRUCT
       dataset_name:
@@ -120,22 +142,29 @@ root:
         parameterType: STRING
       mount_name:
         description: Name of this mount. When this field is None, it will be set to
-          `<dataset_name>`. Defaults to None.
+          `dataset_name`. Defaults to None.
         isOptional: true
         parameterType: STRING
       mount_path:
         description: Path to mount in cache runtime. When this field is None, the
-          mount path will be `/<mount_name>`. Defaults to None.
+          mount path will be set to `/<mount_name>`. Defaults to None.
         isOptional: true
         parameterType: STRING
       mount_point:
-        description: Mount point of the source.
+        description: 'Mount point of the source.
+
+          E.g. use `s3://your-bucket` to mount a S3 bucket.'
         parameterType: STRING
       namespace:
         description: Namespace of the Dataset.
         parameterType: STRING
       options:
-        description: Options which may be used in cache runtime.
+        description: "Options which can be used in cache runtime. Defaults to None.\n\
+          E.g. you can set Alluxio configurations in this field if you will bind this\
+          \ Dataset to AlluxioRuntime:\n```python\noptions = {\n    \"alluxio.underfs.s3.endpoint\"\
+          : \"https://your-s3-endpoint\",\n    \"alluxio.underfs.s3.endpoint.region\"\
+          : \"your-s3-region\"\n}\n``` "
+        isOptional: true
         parameterType: STRUCT
 schemaVersion: 2.1.0
 sdkVersion: kfp-2.7.0
